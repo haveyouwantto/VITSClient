@@ -39,7 +39,7 @@
             android:key="noise_scale_w"
             android:title="@string/noise_scale_w_input"
             android:summary="@string/noise_scale_w_hint"
-            android:defaultValue="0.65"
+            android:defaultValue="0.8"
             android:inputType="numberDecimal"
             android:dependency="override_parameters"/>
 

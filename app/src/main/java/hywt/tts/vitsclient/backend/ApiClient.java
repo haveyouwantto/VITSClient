@@ -13,8 +13,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import hywt.tts.vitsclient.proto.Speaker;
 import hywt.tts.vitsclient.Utils;
@@ -25,6 +27,17 @@ public class ApiClient {
     private List<Voice> voices;
     private List<Locale> supportedLanguages;
 
+    private static final Map<String, String> LANGUAGES_MAP = new HashMap<>();
+
+    static {
+        LANGUAGES_MAP.put("eng", "en");
+        LANGUAGES_MAP.put("zho", "zh");
+        LANGUAGES_MAP.put("jpn", "ja");
+        LANGUAGES_MAP.put("kor", "ko");
+        LANGUAGES_MAP.put("tha", "th");
+        LANGUAGES_MAP.put("san", "sa");
+    }
+
     public ApiClient(String baseUrl) {
         this.baseUrl = baseUrl;
     }
@@ -34,7 +47,11 @@ public class ApiClient {
         if (language == null || supportedLanguages.size() <= 1) {
             query = text.strip();
         } else {
-            String code = language.getLanguage().toUpperCase();
+            String code = language.getLanguage();
+            if (code.length() >= 3) {
+                code = LANGUAGES_MAP.get(code);
+            }
+            code = code.toUpperCase();
             query = String.format("[%s]%s[%s]", code, text.strip(), code);
         }
         return baseUrl + "/tts?text=" + query + "&speaker=" + id + "&length_scale=" + lengthScale + "&noise_scale=" + noiseScale + "&noise_scale_w=" + noiseScaleW;
@@ -74,7 +91,7 @@ public class ApiClient {
         }
     }
 
-    private void info() throws IOException{
+    private void info() throws IOException {
         URL url = new URL(baseUrl + "/info");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");

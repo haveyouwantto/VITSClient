@@ -12,28 +12,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class LocaleArrayAdapter extends ArrayAdapter<Locale> {
-    public LocaleArrayAdapter(@NonNull Context context, int resource) {
-        super(context, resource);
-    }
-
-    public LocaleArrayAdapter(@NonNull Context context, int resource, int textViewResourceId) {
-        super(context, resource, textViewResourceId);
-    }
-
-    public LocaleArrayAdapter(@NonNull Context context, int resource, @NonNull Locale[] objects) {
-        super(context, resource, objects);
-    }
-
-    public LocaleArrayAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull Locale[] objects) {
-        super(context, resource, textViewResourceId, objects);
-    }
 
     public LocaleArrayAdapter(@NonNull Context context, int resource, @NonNull List<Locale> objects) {
         super(context, resource, objects);
-    }
-
-    public LocaleArrayAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull List<Locale> objects) {
-        super(context, resource, textViewResourceId, objects);
     }
 
     @Override
