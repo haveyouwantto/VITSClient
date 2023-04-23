@@ -1,5 +1,7 @@
 package hywt.tts.vitsclient;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -51,7 +53,7 @@ public class ApiClient {
         InputStream responseStream = connection.getInputStream();
         String responseString = new String(Utils.readAllBytes(responseStream));
         speakers = new Gson().fromJson(responseString, Speaker[].class);
-        System.out.println("speaker list created");
+        Log.i(this.getClass().getName(), "speaker list created");
     }
 
     public Speaker[] getSpeakers() {

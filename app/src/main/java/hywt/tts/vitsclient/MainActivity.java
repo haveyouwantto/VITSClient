@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         speakButton = findViewById(R.id.speak_button);
         reloadButton = findViewById(R.id.reload_button);
 
-        mApiClient = ((TTSApp)getApplication()).getTtsApiClient();
 
         languageSpinner = findViewById(R.id.language_spinner);
         SupportedLanguage[] languages = {SupportedLanguage.ENGLISH, SupportedLanguage.CHINESE, SupportedLanguage.JAPANESE, SupportedLanguage.KOREAN};
@@ -157,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadTTS() {
-
+        mApiClient = ((TTSApp)getApplication()).getTtsApiClient();
         new AsyncTask<Void, Void, Speaker[]>() {
             @Override
             protected Speaker[] doInBackground(Void... voids) {
@@ -181,6 +180,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }.execute();
+    }
+
+    private void reloadTTS(){
+        TTSApp app = (TTSApp)getApplication();
+        app.initClient();
+        mApiClient = app.getTtsApiClient();
+        loadTTS();
     }
 
     public void onTtsButtonClick(View view) {

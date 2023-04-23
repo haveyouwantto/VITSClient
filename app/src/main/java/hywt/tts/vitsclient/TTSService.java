@@ -6,6 +6,7 @@ import android.speech.tts.SynthesisRequest;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeechService;
 import android.speech.tts.Voice;
+import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
@@ -31,7 +32,7 @@ public class TTSService extends TextToSpeechService {
 
     public void onCreate() {
         super.onCreate();
-        System.out.println("created");
+        Log.i(this.getClass().getName(), "created tts service");
     }
 
     @Override
@@ -43,7 +44,7 @@ public class TTSService extends TextToSpeechService {
     protected void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
         float rate = 2.5f- request.getSpeechRate()/200f;
         String log = String.format("text synthesis %s %s %f %s\n", request.getLanguage(), request.getVoiceName(),rate, request.getCharSequenceText());
-        System.out.println(log);
+        Log.i(this.getClass().getName(), log);
 //        Toast.makeText(this, log, Toast.LENGTH_SHORT).show();
 
         SupportedLanguage language = SupportedLanguage.forName(request.getLanguage());
@@ -108,7 +109,7 @@ public class TTSService extends TextToSpeechService {
 
     @Override
     protected int onLoadLanguage(String lang, String country, String variant) {
-        System.out.println("load language " + lang);
+        Log.i(this.getClass().getName(), "load language " + lang);
         int result = onIsLanguageAvailable(lang, country, variant);
 //        Toast.makeText(this, "load language " + lang, Toast.LENGTH_SHORT).show();
         return result;
@@ -134,14 +135,14 @@ public class TTSService extends TextToSpeechService {
                 voices.add(voice);
             }
         }
-        System.out.println("total voice count: "+voices.size());
+        Log.i(this.getClass().getName(), "total voice count: "+voices.size());
 
         return voices;
     }
 
     @Override
     public int onLoadVoice(String voiceName) {
-        System.out.println("load voice " + voiceName);
+        Log.i(this.getClass().getName(), "load voice " + voiceName);
 //        Toast.makeText(this, "load voice " + voiceName, Toast.LENGTH_SHORT).show();
         return TextToSpeech.SUCCESS;
     }
