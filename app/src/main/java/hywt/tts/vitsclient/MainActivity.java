@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        reloadButton.setOnClickListener(v -> loadTTS());
+        reloadButton.setOnClickListener(v -> reloadTTS());
 
         mSpeakerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
