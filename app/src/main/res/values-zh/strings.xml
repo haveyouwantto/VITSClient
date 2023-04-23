@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">VITS客户端</string>
+    <string name="length_scale_text">音频长度：%.3f</string>
+    <string name="noise_scale_text">噪声范围：%.3f</string>
+    <string name="noise_scale_w_text">DP噪声：%.3f</string>
+    <string name="english">英语</string>
+    <string name="chinese">中文</string>
+    <string name="japanese">日语</string>
+    <string name="text_prompt">输入要朗读的文本</string>
+    <string name="speak">朗读</string>
+    <string name="network">网络</string>
+    <string name="server_address">服务器地址</string>
+    <string name="server_address_info">API服务器的网址</string>
+    <string name="settings">设置</string>
+    <string name="reload_button">重新加载</string>
+    <string name="open_tts_settings">打开TTS设置</string>
+</resources>

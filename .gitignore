@@ -1,0 +1,100 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Built application files
+*.apk
+*.aar
+*.ap_
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+build/
+app/build/
+captures/
+gradle/
+local.properties
+*.iml
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Android Studio Navigation editor temp files
+.navigation/
+
+# Android Studio captures folder for screenshots and video recordings
+captures/
+
+# IntelliJ
+*.iws
+*.ipr
+*.iml
+
+# User-specific configurations
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/tasks.xml
+.idea/dictionaries
+
+# NDK
+obj/
+jniLibs/
+
+# Proguard
+proguard-rules.pro
+proguard-project.txt
+proguard-android.txt
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Gradle
+.gradle/
+build/
+.idea/
+local.properties
+*.iws
+*.iml
+*.ipr
+
+# Android Patch
+gen-external-apklibs
+
+# Annotations
+*.orig
+*.lock
+*.bak
+
+# Bazel files
+bazel-*
+.blazeflag
+blaze-genfiles/
+blaze-out/
+blaze-bazel/
+blaze-testlogs/
