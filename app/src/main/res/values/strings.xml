@@ -15,8 +15,13 @@
     <string name="reload_button">Reload</string>
     <string name="open_tts_settings">Open TTS Settings</string>
     <string name="korean">Korean</string>
-    <string name="title_activity_new">NewActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="generation">Generation</string>
+    <string name="override_params">Override Parameters</string>
+    <string name="override_params_hint">Enable to force generation parameters to be set as below</string>
+    <string name="length_scale_input">Length Scale</string>
+    <string name="length_scale_hint">Control TTS audio duration</string>
+    <string name="noise_scale_input">Noise Scale</string>
+    <string name="noise_scale_hint">Control emotion change speed</string>
+    <string name="noise_scale_w_input">Noise Scale W</string>
+    <string name="noise_scale_w_hint">Control vowel duration</string>
 </resources>

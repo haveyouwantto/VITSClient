@@ -9,5 +9,39 @@
         android:summary="@string/server_address_info"
         android:defaultValue="http://192.168.2.41:51817"/>
     </PreferenceCategory>
+    <PreferenceCategory
+        android:key="generation_category"
+        android:title="@string/generation">
 
+        <SwitchPreferenceCompat
+            android:key="override_parameters"
+            android:title="@string/override_params"
+            android:summary="@string/override_params_hint"
+            android:defaultValue="false"/>
+
+        <EditTextPreference
+            android:key="length_scale"
+            android:title="@string/length_scale_input"
+            android:summary="@string/length_scale_hint"
+            android:defaultValue="1.2"
+            android:inputType="numberDecimal"
+            android:dependency="override_parameters"/>
+
+        <EditTextPreference
+            android:key="noise_scale"
+            android:title="@string/noise_scale_input"
+            android:summary="@string/noise_scale_hint"
+            android:defaultValue="0.6"
+            android:inputType="numberDecimal"
+            android:dependency="override_parameters"/>
+
+        <EditTextPreference
+            android:key="noise_scale_w"
+            android:title="@string/noise_scale_w_input"
+            android:summary="@string/noise_scale_w_hint"
+            android:defaultValue="0.65"
+            android:inputType="numberDecimal"
+            android:dependency="override_parameters"/>
+
+    </PreferenceCategory>
 </PreferenceScreen>

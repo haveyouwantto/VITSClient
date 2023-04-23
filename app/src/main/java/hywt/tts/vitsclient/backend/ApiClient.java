@@ -1,0 +1,114 @@
+package hywt.tts.vitsclient.backend;
+
+import android.speech.tts.Voice;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
+import hywt.tts.vitsclient.proto.Speaker;
+import hywt.tts.vitsclient.Utils;
+
+public class ApiClient {
+    private String baseUrl;
+    private Speaker[] speakers;
+    private List<Voice> voices;
+    private List<Locale> supportedLanguages;
+
+    public ApiClient(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public String getURL(Locale language, String text, int id, float lengthScale, float noiseScale, float noiseScaleW) {
+        String query;
+        if (language == null) {
+            query = text.strip();
+        } else {
+            String code = language.getLanguage().toUpperCase();
+            query = String.format("[%s]%s[%s]", code, text.strip(), code);
+        }
+        return baseUrl + "/tts?text=" + query + "&speaker=" + id + "&length_scale=" + lengthScale + "&noise_scale=" + noiseScale + "&noise_scale_w=" + noiseScaleW;
+    }
+
+    public InputStream generate(Locale language, String text, int id, float lengthScale, float noiseScale, float noiseScaleW) throws IOException {
+        URL url = new URL(getURL(language, text, id, lengthScale, noiseScale, noiseScaleW));
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        return connection.getInputStream();
+    }
+
+    public InputStream generate(Locale language, String text, int speakerId) throws IOException {
+        return generate(language, text, speakerId, 1.1f, 0.667f, 0.8f);
+    }
+
+    public InputStream generate(Locale language, String text) throws IOException {
+        return generate(language, text, 0);
+    }
+
+    private void list() throws IOException {
+        URL url = new URL(baseUrl + "/list");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        InputStream responseStream = connection.getInputStream();
+        String responseString = new String(Utils.readAllBytes(responseStream));
+        speakers = new Gson().fromJson(responseString, Speaker[].class);
+        Log.i(this.getClass().getName(), "speaker list created");
+
+        // Convert the speaker list to a list of Voice objects
+        voices = new ArrayList<>();
+        for (Speaker speaker : speakers) {
+            for (Locale locale : supportedLanguages) {
+                Voice voice = new Voice(String.format("%s [%s]", speaker.toString(), locale.getLanguage()), locale, Voice.QUALITY_HIGH, Voice.LATENCY_HIGH, true, Collections.emptySet());
+                voices.add(voice);
+            }
+        }
+    }
+
+    private void info() throws IOException{
+        URL url = new URL(baseUrl + "/info");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        InputStream responseStream = connection.getInputStream();
+        String responseString = new String(Utils.readAllBytes(responseStream));
+        JsonObject infoObject = JsonParser.parseString(responseString).getAsJsonObject();
+
+        supportedLanguages = new ArrayList<>();
+        infoObject.get("languages").getAsJsonArray().forEach(jsonElement -> supportedLanguages.add(new Locale(jsonElement.getAsString())));
+        Log.i(this.getClass().getName(), supportedLanguages.toString());
+
+        Log.i(this.getClass().getName(), "info created");
+    }
+
+    public Speaker[] getSpeakers() {
+        return speakers;
+    }
+
+    public void init() throws IOException {
+        if (speakers == null) {
+            info();
+            list();
+        }
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public List<Voice> getVoices() {
+        return voices;
+    }
+
+    public List<Locale> getSupportedLanguages() {
+        return supportedLanguages;
+    }
+}

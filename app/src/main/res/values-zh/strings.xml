@@ -14,4 +14,13 @@
     <string name="settings">设置</string>
     <string name="reload_button">重新加载</string>
     <string name="open_tts_settings">打开TTS设置</string>
+    <string name="korean">韩语</string>
+    <string name="generation">生成</string><string name="override_params">覆盖生成参数</string>
+    <string name="override_params_hint">启用以将生成参数强制设置为以下内容</string>
+    <string name="length_scale_input">音频长度</string>
+    <string name="length_scale_hint">控制TTS音频持续时间</string>
+    <string name="noise_scale_input">噪声范围</string>
+    <string name="noise_scale_hint">控制情感变化速度</string>
+    <string name="noise_scale_w_input">DP噪声</string>
+    <string name="noise_scale_w_hint">控制音素持续时间</string>
 </resources>

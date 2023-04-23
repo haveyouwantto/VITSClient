@@ -1,5 +1,6 @@
-package hywt.tts.vitsclient;
+package hywt.tts.vitsclient.backend;
 
+import android.content.SharedPreferences;
 import android.media.AudioFormat;
 import android.speech.tts.SynthesisCallback;
 import android.speech.tts.SynthesisRequest;
@@ -7,21 +8,22 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeechService;
 import android.speech.tts.Voice;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import hywt.tts.vitsclient.TTSApp;
+import hywt.tts.vitsclient.Utils;
 
 public class TTSService extends TextToSpeechService {
     private ApiClient client;
@@ -42,21 +44,35 @@ public class TTSService extends TextToSpeechService {
 
     @Override
     protected void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
-        float rate = 2.5f - request.getSpeechRate() / 200f;
-        float pitch = request.getPitch() / 200f;
 
-        String log = String.format("text synthesis lang=%s voice=%s rate=%f pitch=%f text=%s\n", request.getLanguage(), request.getVoiceName(), rate,pitch, request.getCharSequenceText());
-        Log.i(this.getClass().getName(), log);
+        try {
+
+            float rate;
+            float pitch;
+            float scaleW;
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            if (preferences.getBoolean("override_parameters", false)) {
+                rate = Float.parseFloat(preferences.getString("length_scale", "1.2"));
+                pitch = Float.parseFloat(preferences.getString("noise_scale", "0.6"));
+                scaleW = Float.parseFloat(preferences.getString("noise_scale_w", "0.65"));
+            } else {
+                rate = 2.5f - request.getSpeechRate() / 200f;
+                pitch = request.getPitch() / 200f;
+                scaleW = 0.8f;
+            }
+
+            String log = String.format("text synthesis lang=%s voice=%s rate=%f pitch=%f text=%s\n", request.getLanguage(), request.getVoiceName(), rate, pitch, request.getCharSequenceText());
+            Log.i(this.getClass().getName(), log);
 //        Toast.makeText(this, log, Toast.LENGTH_SHORT).show();
 
-        SupportedLanguage language = SupportedLanguage.forName(request.getLanguage());
-        String text = request.getCharSequenceText().toString();
+            Locale language = new Locale(request.getLanguage());
+            String text = request.getCharSequenceText().toString();
 
-        callback.start(22050, AudioFormat.ENCODING_PCM_16BIT, 1);
-        if (isPunctuationOnly(text)) {
-            callback.done();
-        } else {
-            try {
+            callback.start(22050, AudioFormat.ENCODING_PCM_16BIT, 1);
+            if (isPunctuationOnly(text)) {
+                callback.done();
+            } else {
                 int speakerId = 0;
                 Pattern pattern = Pattern.compile("^\\[(\\d+)]"); // 匹配以方括号开头，后跟一个或多个数字的字符串
                 Matcher matcher = pattern.matcher(request.getVoiceName());
@@ -65,7 +81,7 @@ public class TTSService extends TextToSpeechService {
                     speakerId = Integer.parseInt(matchedText);
                 }
 
-                InputStream audio = client.generate(language, text, speakerId, rate, pitch, 0.8f);
+                InputStream audio = client.generate(language, text, speakerId, rate, pitch, scaleW);
                 audio.skip(80);
                 byte[] b = Utils.readAllBytes(audio);
                 ByteArrayInputStream bis = new ByteArrayInputStream(b);
@@ -76,14 +92,13 @@ public class TTSService extends TextToSpeechService {
                 }
                 audio.close();
                 bis.close();
-
-                callback.done();
-            } catch (IOException e) {
-                callback.error();
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            callback.error();
+            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        } finally {
+            callback.done();
         }
-
     }
 
     private static final String PUNCTUATION_REGEX = "^[，。？！（）…“”]+$";
@@ -112,31 +127,13 @@ public class TTSService extends TextToSpeechService {
     @Override
     protected int onLoadLanguage(String lang, String country, String variant) {
         Log.i(this.getClass().getName(), "load language " + lang);
-        int result = onIsLanguageAvailable(lang, country, variant);
-//        Toast.makeText(this, "load language " + lang, Toast.LENGTH_SHORT).show();
-        return result;
+        //        Toast.makeText(this, "load language " + lang, Toast.LENGTH_SHORT).show();
+        return onIsLanguageAvailable(lang, country, variant);
     }
 
     @Override
     public List<Voice> onGetVoices() {
-        // Fetch the list of speakers from your API client
-        Speaker[] speakers = client.getSpeakers();
-
-        Locale[] locales = new Locale[]{
-//                new Locale("en", "US"),
-                new Locale("zh", "CN"),
-                new Locale("ja", "JP"),
-//                new Locale("ko", "KR")
-        };
-
-        // Convert the speaker list to a list of Voice objects
-        List<Voice> voices = new ArrayList<>();
-        for (Speaker speaker : speakers) {
-            for (Locale locale : locales) {
-                Voice voice = new Voice(String.format("%s [%s]", speaker.toString(), locale.getLanguage()), locale, Voice.QUALITY_HIGH, Voice.LATENCY_HIGH, true, Collections.emptySet());
-                voices.add(voice);
-            }
-        }
+        List<Voice> voices = client.getVoices();
         Log.i(this.getClass().getName(), "total voice count: " + voices.size());
 
         return voices;
@@ -159,7 +156,7 @@ public class TTSService extends TextToSpeechService {
         if (client == null) {
             client = ((TTSApp) getApplication()).getTtsApiClient();
             try {
-                client.loadSpeakers();
+                client.init();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

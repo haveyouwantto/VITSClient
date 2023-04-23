@@ -1,13 +1,11 @@
 package hywt.tts.vitsclient;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,11 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
+
+import hywt.tts.vitsclient.adapters.LocaleArrayAdapter;
+import hywt.tts.vitsclient.backend.ApiClient;
+import hywt.tts.vitsclient.proto.Speaker;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Spinner languageSpinner;
 
     private ApiClient mApiClient;
-    private SupportedLanguage selectedLanguage;
+    private Locale selectedLanguage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         languageSpinner = findViewById(R.id.language_spinner);
-        SupportedLanguage[] languages = {SupportedLanguage.ENGLISH, SupportedLanguage.CHINESE, SupportedLanguage.JAPANESE, SupportedLanguage.KOREAN};
-        ArrayAdapter<SupportedLanguage> speakerAdapter = new ArrayAdapter<>(MainActivity.this,
-                android.R.layout.simple_spinner_dropdown_item, languages);
-        languageSpinner.setAdapter(speakerAdapter);
 
 
         findViewById(R.id.settings_button).setOnClickListener(v -> {
@@ -96,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedLanguage = ((SupportedLanguage) parent.getSelectedItem());
+                selectedLanguage = ((Locale) parent.getSelectedItem());
             }
 
             @Override
@@ -161,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected Speaker[] doInBackground(Void... voids) {
                 try {
-                    mApiClient.loadSpeakers();
+                    mApiClient.init();
                     return mApiClient.getSpeakers();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -175,6 +172,11 @@ public class MainActivity extends AppCompatActivity {
                     ArrayAdapter<Speaker> speakerAdapter = new ArrayAdapter<>(MainActivity.this,
                             android.R.layout.simple_spinner_dropdown_item, speakers);
                     mSpeakerSpinner.setAdapter(speakerAdapter);
+                    ArrayAdapter<Locale> localeArrayAdapter = new LocaleArrayAdapter(MainActivity.this,
+                            android.R.layout.simple_spinner_dropdown_item, mApiClient.getSupportedLanguages());
+
+                    languageSpinner.setAdapter(localeArrayAdapter);
+
                 } else {
                     Toast.makeText(MainActivity.this, "Error fetching speaker list", Toast.LENGTH_LONG).show();
                 }

@@ -1,6 +1,8 @@
-package hywt.tts.vitsclient;
+package hywt.tts.vitsclient.proto;
 
 import android.content.Context;
+
+import hywt.tts.vitsclient.R;
 
 public enum SupportedLanguage {
     ENGLISH(R.string.english,"EN"),

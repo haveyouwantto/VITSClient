@@ -4,6 +4,8 @@ import android.app.Application;
 
 import androidx.preference.PreferenceManager;
 
+import hywt.tts.vitsclient.backend.ApiClient;
+
 public class TTSApp extends Application {
     private ApiClient ttsApiClient;
 

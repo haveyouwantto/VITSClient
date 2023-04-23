@@ -1,4 +1,4 @@
-package hywt.tts.vitsclient;
+package hywt.tts.vitsclient.proto;
 
 public class Speaker {
     public String name;
