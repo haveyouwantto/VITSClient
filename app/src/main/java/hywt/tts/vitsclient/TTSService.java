@@ -42,8 +42,10 @@ public class TTSService extends TextToSpeechService {
 
     @Override
     protected void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
-        float rate = 2.5f- request.getSpeechRate()/200f;
-        String log = String.format("text synthesis %s %s %f %s\n", request.getLanguage(), request.getVoiceName(),rate, request.getCharSequenceText());
+        float rate = 2.5f - request.getSpeechRate() / 200f;
+        float pitch = request.getPitch() / 200f;
+
+        String log = String.format("text synthesis lang=%s voice=%s rate=%f pitch=%f text=%s\n", request.getLanguage(), request.getVoiceName(), rate,pitch, request.getCharSequenceText());
         Log.i(this.getClass().getName(), log);
 //        Toast.makeText(this, log, Toast.LENGTH_SHORT).show();
 
@@ -63,7 +65,7 @@ public class TTSService extends TextToSpeechService {
                     speakerId = Integer.parseInt(matchedText);
                 }
 
-                InputStream audio = client.generate(language, text, speakerId, rate, 0.667f, 0.8f);
+                InputStream audio = client.generate(language, text, speakerId, rate, pitch, 0.8f);
                 audio.skip(80);
                 byte[] b = Utils.readAllBytes(audio);
                 ByteArrayInputStream bis = new ByteArrayInputStream(b);
@@ -135,7 +137,7 @@ public class TTSService extends TextToSpeechService {
                 voices.add(voice);
             }
         }
-        Log.i(this.getClass().getName(), "total voice count: "+voices.size());
+        Log.i(this.getClass().getName(), "total voice count: " + voices.size());
 
         return voices;
     }
@@ -155,7 +157,7 @@ public class TTSService extends TextToSpeechService {
     @Override
     public String onGetDefaultVoiceNameFor(String lang, String country, String variant) {
         if (client == null) {
-            client = ((TTSApp)getApplication()).getTtsApiClient();
+            client = ((TTSApp) getApplication()).getTtsApiClient();
             try {
                 client.loadSpeakers();
             } catch (IOException e) {
