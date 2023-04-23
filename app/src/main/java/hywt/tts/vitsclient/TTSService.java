@@ -120,10 +120,10 @@ public class TTSService extends TextToSpeechService {
         Speaker[] speakers = client.getSpeakers();
 
         Locale[] locales = new Locale[]{
-                new Locale("en", "US"),
+//                new Locale("en", "US"),
                 new Locale("zh", "CN"),
                 new Locale("ja", "JP"),
-                new Locale("ko", "KR")
+//                new Locale("ko", "KR")
         };
 
         // Convert the speaker list to a list of Voice objects
@@ -134,7 +134,7 @@ public class TTSService extends TextToSpeechService {
                 voices.add(voice);
             }
         }
-        System.out.println(voices);
+        System.out.println("total voice count: "+voices.size());
 
         return voices;
     }
@@ -154,7 +154,7 @@ public class TTSService extends TextToSpeechService {
     @Override
     public String onGetDefaultVoiceNameFor(String lang, String country, String variant) {
         if (client == null) {
-            client = new ApiClient(PreferenceManager.getDefaultSharedPreferences(this).getString("server_url", ""));
+            client = ((TTSApp)getApplication()).getTtsApiClient();
             try {
                 client.loadSpeakers();
             } catch (IOException e) {

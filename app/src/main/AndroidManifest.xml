@@ -14,11 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VITSClient"
         android:usesCleartextTraffic="true"
+        android:name=".TTSApp"
         tools:targetApi="31">
-        <activity
-            android:name=".NewActivity"
-            android:exported="false"
-            android:label="@string/title_activity_new" />
         <activity
             android:name=".SettingsActivity"
             android:exported="false"

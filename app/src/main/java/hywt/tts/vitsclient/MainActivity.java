@@ -59,11 +59,14 @@ public class MainActivity extends AppCompatActivity {
         speakButton = findViewById(R.id.speak_button);
         reloadButton = findViewById(R.id.reload_button);
 
+        mApiClient = ((TTSApp)getApplication()).getTtsApiClient();
+
         languageSpinner = findViewById(R.id.language_spinner);
         SupportedLanguage[] languages = {SupportedLanguage.ENGLISH, SupportedLanguage.CHINESE, SupportedLanguage.JAPANESE, SupportedLanguage.KOREAN};
         ArrayAdapter<SupportedLanguage> speakerAdapter = new ArrayAdapter<>(MainActivity.this,
                 android.R.layout.simple_spinner_dropdown_item, languages);
         languageSpinner.setAdapter(speakerAdapter);
+
 
         findViewById(R.id.settings_button).setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
@@ -154,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadTTS() {
-        mApiClient = new ApiClient(getDefaultServerUrl());
 
         new AsyncTask<Void, Void, Speaker[]>() {
             @Override
@@ -181,15 +183,7 @@ public class MainActivity extends AppCompatActivity {
         }.execute();
     }
 
-    private String getDefaultServerUrl() {
-        return getSharedPreferences().getString("server_url", "");
-    }
-
-    private SharedPreferences getSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(this);
-    }
-
-    public void onTtsButtonClick(View view) throws IOException {
+    public void onTtsButtonClick(View view) {
         String text = mTextInput.getText().toString();
         Speaker speaker = (Speaker) mSpeakerSpinner.getSelectedItem();
         float lengthScale = mLengthScaleSeekBar.getProgress() / 40f;

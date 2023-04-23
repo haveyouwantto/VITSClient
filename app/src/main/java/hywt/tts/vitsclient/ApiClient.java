@@ -59,7 +59,7 @@ public class ApiClient {
     }
 
     public void loadSpeakers() throws IOException {
-        list();
+        if (speakers == null) list();
     }
 
 }
