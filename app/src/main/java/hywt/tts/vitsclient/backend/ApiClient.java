@@ -31,7 +31,7 @@ public class ApiClient {
 
     public String getURL(Locale language, String text, int id, float lengthScale, float noiseScale, float noiseScaleW) {
         String query;
-        if (language == null) {
+        if (language == null || supportedLanguages.size() <= 1) {
             query = text.strip();
         } else {
             String code = language.getLanguage().toUpperCase();
