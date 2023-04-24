@@ -13,7 +13,7 @@ You can download the APK from the [releases page](https://github.com/haveyouwant
 
 ## Usage
 
-The first time you launch the app, you need to tap the "Settings" button and enter the API address. After that, tap the "Reload" button to load the available voices from the server.
+The first time you launch the app, you need to tap the "Settings" button and enter the API address. After that, tap the "Reconnect" button to load the available voices from the server.
 
 The main screen of the app is used for testing whether the TTS server is working correctly. You can enter some text and click the "Speak" button to have the TTS server generate audio for the text.
 
@@ -54,9 +54,9 @@ VITS TTS客户端是一个安卓应用程序，可以连接到VITS TTS API服务
 
 ## 使用
 
-第一次启动应用程序时，您需要点击“设置”按钮并输入API地址。然后，点击“重新加载”按钮以从服务器加载可用语音。
+第一次启动应用程序时，您需要点击“设置”按钮并输入API地址。然后，点击“重新连接”按钮以从服务器加载可用语音。
 
-该应用程序的主屏幕用于测试TTS服务器是否正常工作。您可以输入一些文本并点击“播放”按钮，使TTS服务器为文本生成音频。
+该应用程序的主屏幕用于测试TTS服务器是否正常工作。您可以输入一些文本并点击“朗读”按钮，使TTS服务器为文本生成音频。
 
 ## 部署 VITS TTS API
 VITS TTS API 是一个独立的项目，需要本地部署才能使用该应用程序。服务器的源代码可以在 [haveyouwantto/MoeGoe](https://github.com/haveyouwantto/MoeGoe) 代码库中找到，该代码库是原始项目的 fork。
