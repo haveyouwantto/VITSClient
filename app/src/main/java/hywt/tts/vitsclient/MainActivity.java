@@ -140,9 +140,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mLengthScaleSeekBar.setProgress(50);
-        mNoiseScaleSeekBar.setProgress(26);
-        mNoiseScaleWSeekBar.setProgress(32);
+        mLengthScaleSeekBar.setProgress(48);
+        mNoiseScaleSeekBar.setProgress(24);
+        mNoiseScaleWSeekBar.setProgress(35);
         loadTTS();
     }
 
