@@ -22,7 +22,7 @@ import hywt.tts.vitsclient.proto.Speaker;
 import hywt.tts.vitsclient.Utils;
 
 public class ApiClient {
-    private String baseUrl;
+    private final String baseUrl;
     private Speaker[] speakers;
     private List<Voice> voices;
     private List<Locale> supportedLanguages;
@@ -72,25 +72,6 @@ public class ApiClient {
         return generate(language, text, 0);
     }
 
-    private void list() throws IOException {
-        URL url = new URL(baseUrl + "/list");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        InputStream responseStream = connection.getInputStream();
-        String responseString = new String(Utils.readAllBytes(responseStream));
-        speakers = new Gson().fromJson(responseString, Speaker[].class);
-        Log.i(this.getClass().getName(), "speaker list created");
-
-        // Convert the speaker list to a list of Voice objects
-        voices = new ArrayList<>();
-        for (Speaker speaker : speakers) {
-            for (Locale locale : supportedLanguages) {
-                Voice voice = new Voice(String.format("%s [%s]", speaker.toString(), locale.getLanguage()), locale, Voice.QUALITY_HIGH, Voice.LATENCY_HIGH, true, Collections.emptySet());
-                voices.add(voice);
-            }
-        }
-    }
-
     private void info() throws IOException {
         URL url = new URL(baseUrl + "/info");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -102,6 +83,16 @@ public class ApiClient {
         supportedLanguages = new ArrayList<>();
         infoObject.get("languages").getAsJsonArray().forEach(jsonElement -> supportedLanguages.add(new Locale(jsonElement.getAsString())));
         Log.i(this.getClass().getName(), supportedLanguages.toString());
+
+        speakers = new Gson().fromJson(infoObject.get("speakers"), Speaker[].class);
+        // Convert the speaker list to a list of Voice objects
+        voices = new ArrayList<>();
+        for (Speaker speaker : speakers) {
+            for (Locale locale : supportedLanguages) {
+                Voice voice = new Voice(String.format("%s [%s]", speaker.toString(), locale.getLanguage()), locale, Voice.QUALITY_HIGH, Voice.LATENCY_HIGH, true, Collections.emptySet());
+                voices.add(voice);
+            }
+        }
 
         Log.i(this.getClass().getName(), "info created");
     }
@@ -117,7 +108,6 @@ public class ApiClient {
     public void init() throws IOException {
         if (speakers == null) {
             info();
-            list();
         }
     }
 
