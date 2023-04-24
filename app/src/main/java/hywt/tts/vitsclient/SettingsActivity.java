@@ -77,7 +77,8 @@ public class SettingsActivity extends AppCompatActivity {
         private void updateVoiceList(ApiClient client) {
 
             // Get the ListPreference instance
-            ListPreference defaultVoicePreference = findPreference("default_voice");
+            ListPreference defaultVoicePreference = findPreference("default_character");
+            ListPreference secondaryCharPreference = findPreference("secondary_character");
 
             if (client != null) {
                 Speaker[] speakers = client.getSpeakers();
@@ -90,25 +91,34 @@ public class SettingsActivity extends AppCompatActivity {
                         entryValuesList.add(String.valueOf(speaker.id));
                     }
 
-                    // Set the entry values and display names to the ListPreference
-                    defaultVoicePreference.setEntryValues(entryValuesList.toArray(new CharSequence[0]));
-                    defaultVoicePreference.setEntries(displayNamesList.toArray(new CharSequence[0]));
+                    addCharactersToList(client, displayNamesList, entryValuesList, defaultVoicePreference);
+                    addCharactersToList(client, displayNamesList, entryValuesList, secondaryCharPreference);
 
-                    String currentValue = defaultVoicePreference.getValue();
-                    if (currentValue != null)
-                        defaultVoicePreference.setSummary(client.getSpeaker(Integer.parseInt(currentValue)).toString());
-
-                    defaultVoicePreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                        defaultVoicePreference.setSummary(client.getSpeaker(Integer.parseInt((String) newValue)).toString());
-                        return true;
-                    });
-                    defaultVoicePreference.setEnabled(true);
                 } else {
                     defaultVoicePreference.setEnabled(false);
+                    secondaryCharPreference.setEnabled(false);
                 }
             } else {
                 defaultVoicePreference.setEnabled(false);
+                secondaryCharPreference.setEnabled(false);
             }
+        }
+
+        private void addCharactersToList(ApiClient client, List<CharSequence> speakerName,List<CharSequence> values, ListPreference preference){
+
+            // Set the entry values and display names to the ListPreference
+            preference.setEntryValues(values.toArray(new CharSequence[0]));
+            preference.setEntries(speakerName.toArray(new CharSequence[0]));
+
+            String currentValue = preference.getValue();
+            if (currentValue != null)
+                preference.setSummary(client.getSpeaker(Integer.parseInt(currentValue)).toString());
+
+            preference.setOnPreferenceChangeListener((pref, newValue) -> {
+                preference.setSummary(client.getSpeaker(Integer.parseInt((String) newValue)).toString());
+                return true;
+            });
+            preference.setEnabled(true);
         }
     }
 }

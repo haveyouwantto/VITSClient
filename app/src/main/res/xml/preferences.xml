@@ -15,13 +15,35 @@
         android:summary="@string/reconnect_hint"/>
 
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="character_category"
+        android:title="@string/characters">
+
+        <ListPreference
+            android:key="default_character"
+            android:defaultValue="0"
+            android:title="@string/default_character"
+            android:summary="@string/unselected"/>
+
+        <SwitchPreference
+        android:key="enable_secondary_character"
+        android:title="@string/use_secondary_character"
+        android:summary="@string/use_secondary_character_summary"
+        android:defaultValue="false" />
+
+        <ListPreference
+            android:key="secondary_character"
+            android:defaultValue="0"
+            android:title="@string/secondary_character"
+            android:summary="@string/unselected"
+            android:dependency="enable_secondary_character"/>
+
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:key="generation_category"
         android:title="@string/generation">
-        <ListPreference
-            android:key="default_voice"
-            android:title="@string/default_voice"
-            android:summary="@string/unselected"/>
 
         <SwitchPreferenceCompat
             android:key="override_parameters"

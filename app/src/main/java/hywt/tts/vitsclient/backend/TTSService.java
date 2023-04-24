@@ -46,7 +46,6 @@ public class TTSService extends TextToSpeechService {
 
     @Override
     protected void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
-
         try {
             float rate;
             float pitch;
@@ -62,12 +61,8 @@ public class TTSService extends TextToSpeechService {
                 scaleW = 0.8f;
             }
 
-            String log = String.format("text synthesis lang=%s voice=%s rate=%f pitch=%f text=%s\n", request.getLanguage(), request.getVoiceName(), rate, pitch, request.getCharSequenceText());
-            Log.i(this.getClass().getName(), log);
-//        Toast.makeText(this, log, Toast.LENGTH_SHORT).show();
-
             Locale language = new Locale(request.getLanguage());
-            String text = request.getCharSequenceText().toString();
+            String text = request.getCharSequenceText().toString().strip();
 
             callback.start(22050, AudioFormat.ENCODING_PCM_16BIT, 1);
             if (isPunctuationOnly(text)) {
@@ -81,17 +76,18 @@ public class TTSService extends TextToSpeechService {
                     speakerId = Integer.parseInt(matchedText);
                 }
 
-                InputStream audio = client.generate(language, text, speakerId, rate, pitch, scaleW);
-                audio.skip(80);
-                byte[] b = Utils.readAllBytes(audio);
-                ByteArrayInputStream bis = new ByteArrayInputStream(b);
-                byte[] buffer = new byte[4096];
-                int len;
-                while ((len = bis.read(buffer)) > 0) {
-                    callback.audioAvailable(buffer, 0, len);
+                // Check if secondary mode
+                if (preferences.getBoolean("enable_secondary_character", false)) {
+                    int secondarySpeakerId = Integer.parseInt(preferences.getString("secondary_character", "0"));
+                    List<StringResult> segments = Utils.splitByQuotes(text);
+
+                    for (StringResult result : segments) {
+                        if (isPunctuationOnly(result.text)) continue;
+                        synthesizeSegment(callback, language, result.text, result.inQuote ? secondarySpeakerId : speakerId, rate, pitch, scaleW);
+                    }
+                } else {
+                    synthesizeSegment(callback, language, text, speakerId, rate, pitch, scaleW);
                 }
-                audio.close();
-                bis.close();
             }
         } catch (Exception e) {
             callback.error();
@@ -101,7 +97,23 @@ public class TTSService extends TextToSpeechService {
         }
     }
 
-    private static final String PUNCTUATION_REGEX = "^[，。？！（）…“”]+$";
+    private void synthesizeSegment(SynthesisCallback callback, Locale language, String text, int id, float lengthScale, float noiseScale, float noiseScaleW) throws IOException {
+        String log = String.format("text synthesis lang=%s voice=%s l=%f n=%f nw=%f txt=%s\n", language.getDisplayName(), id, lengthScale, noiseScale, noiseScaleW, text);
+        Log.i(this.getClass().getName(), log);
+        InputStream audio = client.generate(language, text, id, lengthScale, noiseScale, noiseScaleW);
+        audio.skip(80);
+        byte[] b = Utils.readAllBytes(audio);
+        ByteArrayInputStream bis = new ByteArrayInputStream(b);
+        byte[] buffer = new byte[4096];
+        int len;
+        while ((len = bis.read(buffer)) > 0) {
+            callback.audioAvailable(buffer, 0, len);
+        }
+        audio.close();
+        bis.close();
+    }
+
+    private static final String PUNCTUATION_REGEX = "^[，。？！（）…“”「」]+$";
     private static final Pattern PUNCTUATION_PATTERN = Pattern.compile(PUNCTUATION_REGEX);
 
     public static boolean isPunctuationOnly(String sentence) {
@@ -127,7 +139,6 @@ public class TTSService extends TextToSpeechService {
     @Override
     protected int onLoadLanguage(String lang, String country, String variant) {
         Log.i(this.getClass().getName(), "load language " + lang);
-        //        Toast.makeText(this, "load language " + lang, Toast.LENGTH_SHORT).show();
         return onIsLanguageAvailable(lang, country, variant);
     }
 
@@ -135,14 +146,12 @@ public class TTSService extends TextToSpeechService {
     public List<Voice> onGetVoices() {
         List<Voice> voices = client.getVoices();
         Log.i(this.getClass().getName(), "total voice count: " + voices.size());
-
         return voices;
     }
 
     @Override
     public int onLoadVoice(String voiceName) {
         Log.i(this.getClass().getName(), "load voice " + voiceName);
-//        Toast.makeText(this, "load voice " + voiceName, Toast.LENGTH_SHORT).show();
         return TextToSpeech.SUCCESS;
     }
 
@@ -161,7 +170,7 @@ public class TTSService extends TextToSpeechService {
                 throw new RuntimeException(e);
             }
         }
-        String defaultVoice = preferences.getString("default_voice","0");
+        String defaultVoice = preferences.getString("default_character", "0");
         return String.format("[%s]", defaultVoice);
     }
 }

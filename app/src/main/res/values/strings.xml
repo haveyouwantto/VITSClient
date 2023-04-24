@@ -27,8 +27,13 @@
     <string name="defaults">Defaults</string>
     <string name="reconnect">Reconnect</string>
     <string name="reconnect_hint">Click here to reconnect</string>
-    <string name="default_voice">Default Voice</string>
+    <string name="default_character">Default Character</string>
     <string name="reconnect_success">Reconnect success</string>
     <string name="reconnect_failed">Reconnect failed</string>
     <string name="unselected">Not selected</string>
+
+    <string name="characters">Characters</string>
+    <string name="use_secondary_character">Enable secondary character</string>
+    <string name="use_secondary_character_summary">Read the text inside quotes using secondary character</string>
+    <string name="secondary_character">Secondary Character</string>
 </resources>

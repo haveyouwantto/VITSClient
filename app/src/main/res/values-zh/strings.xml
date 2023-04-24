@@ -26,8 +26,12 @@
     <string name="defaults">默认值</string>
     <string name="reconnect">重新连接</string>
     <string name="reconnect_hint">点击这里重新连接</string>
-    <string name="default_voice">默认角色</string>
+    <string name="default_character">默认角色</string>
     <string name="reconnect_success">重连成功</string>
     <string name="reconnect_failed">重连失败</string>
     <string name="unselected">未选择</string>
+    <string name="characters">角色</string>
+    <string name="use_secondary_character">启用第二角色</string>
+    <string name="use_secondary_character_summary">使用第二角色朗读双引号内的文字</string>
+    <string name="secondary_character">第二角色</string>
 </resources>
