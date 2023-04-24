@@ -36,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar mLengthScaleSeekBar;
     private SeekBar mNoiseScaleSeekBar;
     private SeekBar mNoiseScaleWSeekBar;
-    private Button speakButton;
-    private Button reloadButton;
 
     private Spinner languageSpinner;
 
@@ -57,8 +55,6 @@ public class MainActivity extends AppCompatActivity {
         mLengthScaleSeekBar = findViewById(R.id.length_scale_seekbar);
         mNoiseScaleSeekBar = findViewById(R.id.noise_scale_seekbar);
         mNoiseScaleWSeekBar = findViewById(R.id.noise_scale_w_seekbar);
-        speakButton = findViewById(R.id.speak_button);
-        reloadButton = findViewById(R.id.reload_button);
 
 
         languageSpinner = findViewById(R.id.language_spinner);
@@ -75,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         });
-
-        reloadButton.setOnClickListener(v -> reloadTTS());
 
         mSpeakerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -182,13 +176,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }.execute();
-    }
-
-    private void reloadTTS(){
-        TTSApp app = (TTSApp)getApplication();
-        app.initClient();
-        mApiClient = app.getTtsApiClient();
-        loadTTS();
     }
 
     public void onTtsButtonClick(View view) {

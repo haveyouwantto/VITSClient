@@ -23,4 +23,11 @@
     <string name="noise_scale_hint">控制情感变化速度</string>
     <string name="noise_scale_w_input">DP噪声</string>
     <string name="noise_scale_w_hint">控制音素持续时间</string>
+    <string name="defaults">默认值</string>
+    <string name="reconnect">重新连接</string>
+    <string name="reconnect_hint">点击这里重新连接</string>
+    <string name="default_voice">默认角色</string>
+    <string name="reconnect_success">重连成功</string>
+    <string name="reconnect_failed">重连失败</string>
+    <string name="unselected">未选择</string>
 </resources>

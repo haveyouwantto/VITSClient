@@ -20,7 +20,8 @@ public class TTSApp extends Application {
         return this.ttsApiClient;
     }
 
-    public void initClient(){
-        this.ttsApiClient = new ApiClient(PreferenceManager.getDefaultSharedPreferences(this).getString("server_url",""));
+    public void initClient() {
+        this.ttsApiClient = new ApiClient(PreferenceManager.getDefaultSharedPreferences(this).getString("server_url", ""));
     }
+
 }

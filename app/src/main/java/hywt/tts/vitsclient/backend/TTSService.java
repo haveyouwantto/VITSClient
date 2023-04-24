@@ -27,6 +27,7 @@ import hywt.tts.vitsclient.Utils;
 
 public class TTSService extends TextToSpeechService {
     private ApiClient client;
+    private SharedPreferences preferences;
 
     public TTSService() {
         super();
@@ -34,6 +35,7 @@ public class TTSService extends TextToSpeechService {
 
     public void onCreate() {
         super.onCreate();
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
         Log.i(this.getClass().getName(), "created tts service");
     }
 
@@ -46,12 +48,10 @@ public class TTSService extends TextToSpeechService {
     protected void onSynthesizeText(SynthesisRequest request, SynthesisCallback callback) {
 
         try {
-
             float rate;
             float pitch;
             float scaleW;
 
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             if (preferences.getBoolean("override_parameters", false)) {
                 rate = Float.parseFloat(preferences.getString("length_scale", "1.2"));
                 pitch = Float.parseFloat(preferences.getString("noise_scale", "0.6"));
@@ -161,8 +161,7 @@ public class TTSService extends TextToSpeechService {
                 throw new RuntimeException(e);
             }
         }
-        if (client.getSpeakers() != null && client.getSpeakers().length > 0) {
-            return client.getSpeakers()[0].toString();
-        } else return "[0] default";
+        String defaultVoice = preferences.getString("default_voice","0");
+        return String.format("[%s]", defaultVoice);
     }
 }

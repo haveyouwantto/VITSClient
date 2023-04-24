@@ -24,4 +24,11 @@
     <string name="noise_scale_hint">Control emotion change speed</string>
     <string name="noise_scale_w_input">Noise Scale W</string>
     <string name="noise_scale_w_hint">Control vowel duration</string>
+    <string name="defaults">Defaults</string>
+    <string name="reconnect">Reconnect</string>
+    <string name="reconnect_hint">Click here to reconnect</string>
+    <string name="default_voice">Default Voice</string>
+    <string name="reconnect_success">Reconnect success</string>
+    <string name="reconnect_failed">Reconnect failed</string>
+    <string name="unselected">Not selected</string>
 </resources>

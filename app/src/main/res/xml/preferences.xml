@@ -8,10 +8,20 @@
         android:title="@string/server_address"
         android:summary="@string/server_address_info"
         android:defaultValue="http://192.168.2.41:51817"/>
+
+        <Preference
+        android:key="reconnect_button"
+        android:title="@string/reconnect"
+        android:summary="@string/reconnect_hint"/>
+
     </PreferenceCategory>
     <PreferenceCategory
         android:key="generation_category"
         android:title="@string/generation">
+        <ListPreference
+            android:key="default_voice"
+            android:title="@string/default_voice"
+            android:summary="@string/unselected"/>
 
         <SwitchPreferenceCompat
             android:key="override_parameters"

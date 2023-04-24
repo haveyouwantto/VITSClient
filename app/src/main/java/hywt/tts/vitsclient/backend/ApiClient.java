@@ -110,6 +110,10 @@ public class ApiClient {
         return speakers;
     }
 
+    public Speaker getSpeaker(int index){
+        return speakers[index];
+    }
+
     public void init() throws IOException {
         if (speakers == null) {
             info();
