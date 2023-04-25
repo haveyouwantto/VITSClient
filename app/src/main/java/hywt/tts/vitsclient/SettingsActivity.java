@@ -18,6 +18,7 @@ import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import hywt.tts.vitsclient.adapters.LocaleArrayAdapter;
 import hywt.tts.vitsclient.backend.ApiClient;
@@ -67,11 +68,15 @@ public class SettingsActivity extends AppCompatActivity {
                     @Override
                     protected void onPostExecute(ApiClient client1) {
                         updateVoiceList(client1);
+                        updateLanguageList(client1);
                     }
                 }.execute();
                 return true;
             });
-            updateVoiceList(app.getTtsApiClient());
+
+            ApiClient client = app.getTtsApiClient();
+            updateVoiceList(client);
+            updateLanguageList(client);
         }
 
         private void updateVoiceList(ApiClient client) {
@@ -104,7 +109,41 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
-        private void addCharactersToList(ApiClient client, List<CharSequence> speakerName,List<CharSequence> values, ListPreference preference){
+        private void updateLanguageList(ApiClient client){
+            ListPreference forceLanguage = findPreference("force_language");
+            List<CharSequence> languageNames = new ArrayList<>();
+            List<CharSequence> languageCodes = new ArrayList<>();
+            languageNames.add(getString(R.string.unselected));
+            languageCodes.add("null");
+
+            if (client != null) {
+                List<Locale> locales = client.getSupportedLanguages();
+                if (locales != null) {
+                    for (Locale locale : locales) {
+                        languageNames.add(locale.getDisplayName());
+                        languageCodes.add(locale.getLanguage());
+                    }
+                }
+            }
+
+            forceLanguage.setEntryValues(languageCodes.toArray(new CharSequence[0]));
+            forceLanguage.setEntries(languageNames.toArray(new CharSequence[0]));
+            String currentValue = forceLanguage.getValue();
+            if (Objects.equals(currentValue, "null"))
+                forceLanguage.setSummary(getString(R.string.unselected));
+            else
+                forceLanguage.setSummary(new Locale(currentValue).getDisplayName());
+
+            forceLanguage.setOnPreferenceChangeListener((pref, newValue) -> {
+                if (newValue.equals("null"))
+                    forceLanguage.setSummary(getString(R.string.unselected));
+                else
+                    forceLanguage.setSummary(new Locale((String) newValue).getDisplayName());
+                return true;
+            });
+        }
+
+        private void addCharactersToList(ApiClient client, List<CharSequence> speakerName, List<CharSequence> values, ListPreference preference) {
 
             // Set the entry values and display names to the ListPreference
             preference.setEntryValues(values.toArray(new CharSequence[0]));

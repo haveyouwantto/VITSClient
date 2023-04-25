@@ -61,7 +61,14 @@ public class TTSService extends TextToSpeechService {
                 scaleW = 0.8f;
             }
 
-            Locale language = new Locale(request.getLanguage());
+            Locale language;
+            String forceLanguage = preferences.getString("force_language", "null");
+            if (forceLanguage.equals("null")) {
+                language = new Locale(request.getLanguage());
+            } else {
+                language = new Locale(forceLanguage);
+            }
+
             String text = request.getCharSequenceText().toString().strip();
 
             callback.start(22050, AudioFormat.ENCODING_PCM_16BIT, 1);

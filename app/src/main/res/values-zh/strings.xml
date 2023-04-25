@@ -34,4 +34,6 @@
     <string name="use_secondary_character">启用第二角色</string>
     <string name="use_secondary_character_summary">使用第二角色朗读双引号内的文字</string>
     <string name="secondary_character">第二角色</string>
+    <string name="force_language">强制指定语言</string>
+    <string name="force_language_summary">手动选择朗读的语言</string>
 </resources>

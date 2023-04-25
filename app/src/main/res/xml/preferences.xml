@@ -39,6 +39,12 @@
             android:summary="@string/unselected"
             android:dependency="enable_secondary_character"/>
 
+        <ListPreference
+            android:key="force_language"
+            android:defaultValue="null"
+            android:title="@string/force_language"
+            android:summary="@string/unselected"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory
