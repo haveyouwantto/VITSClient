@@ -1,26 +1,19 @@
 package hywt.tts.vitsclient;
 
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import hywt.tts.vitsclient.adapters.LocaleArrayAdapter;
 import hywt.tts.vitsclient.backend.ApiClient;
 import hywt.tts.vitsclient.proto.Speaker;
 
@@ -43,40 +36,47 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
+        private TTSApp app;
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preferences, rootKey);
 
-            TTSApp app = (TTSApp) requireActivity().getApplication();
+            this.app = (TTSApp) requireActivity().getApplication();
 
             Preference reconnectButtonPreference = findPreference("reconnect_button");
             reconnectButtonPreference.setOnPreferenceClickListener(preference -> {
-                new AsyncTask<Void, Void, ApiClient>() {
-                    @Override
-                    protected ApiClient doInBackground(Void... voids) {
-                        try {
-                            app.initClient();
-                            ApiClient client = app.getTtsApiClient();
-                            client.init();
-                            return client;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(ApiClient client1) {
-                        updateVoiceList(client1);
-                        updateLanguageList(client1);
-                    }
-                }.execute();
+                TTSApp app = (TTSApp) requireActivity().getApplication();
+                app.createClient();
+                initClient();
                 return true;
             });
+            initClient();
 
             ApiClient client = app.getTtsApiClient();
             updateVoiceList(client);
             updateLanguageList(client);
+        }
+
+        private void initClient(){
+            new AsyncTask<Void, Void, ApiClient>() {
+                @Override
+                protected ApiClient doInBackground(Void... voids) {
+                    try {
+                        ApiClient client = app.getTtsApiClient();
+                        client.init();
+                        return client;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(ApiClient client1) {
+                    updateVoiceList(client1);
+                    updateLanguageList(client1);
+                }
+            }.execute();
         }
 
         private void updateVoiceList(ApiClient client) {

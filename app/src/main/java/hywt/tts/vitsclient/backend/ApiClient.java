@@ -3,6 +3,8 @@ package hywt.tts.vitsclient.backend;
 import android.speech.tts.Voice;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -94,6 +96,10 @@ public class ApiClient {
             }
         }
 
+//        for (int i = 0; i < 1000; i++) {
+//            voices.add(new Voice("voice " + i, Locale.CHINESE, Voice.QUALITY_HIGH, Voice.LATENCY_HIGH, true, Collections.emptySet()));
+//        }
+
         Log.i(this.getClass().getName(), "info created");
     }
 
@@ -101,7 +107,7 @@ public class ApiClient {
         return speakers;
     }
 
-    public Speaker getSpeaker(int index){
+    public Speaker getSpeaker(int index) {
         return speakers[index];
     }
 
@@ -121,5 +127,11 @@ public class ApiClient {
 
     public List<Locale> getSupportedLanguages() {
         return supportedLanguages;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return String.format("ApiClient address=%s status=%s", baseUrl, speakers != null ? "initialized" : "disconnected");
     }
 }

@@ -19,6 +19,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +33,7 @@ import hywt.tts.vitsclient.Utils;
 public class TTSService extends TextToSpeechService {
     private ApiClient client;
     private SharedPreferences preferences;
+    private String[] currentLanguage;
 
     public TTSService() {
         super();
@@ -99,6 +105,7 @@ public class TTSService extends TextToSpeechService {
         } catch (Exception e) {
             callback.error();
             Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         } finally {
             callback.done();
         }
@@ -130,7 +137,13 @@ public class TTSService extends TextToSpeechService {
 
     @Override
     protected int onIsLanguageAvailable(String lang, String country, String variant) {
-        return TextToSpeech.LANG_COUNTRY_AVAILABLE;
+        ensureClient();
+        List<Locale> locales = client.getSupportedLanguages();
+        System.out.println(locales);
+        for (Locale locale : locales) {
+            if (locale.getISO3Language().equals(lang)) return TextToSpeech.LANG_COUNTRY_AVAILABLE;
+        }
+        return TextToSpeech.LANG_NOT_SUPPORTED;
     }
 
     @Override
@@ -140,12 +153,13 @@ public class TTSService extends TextToSpeechService {
 
     @Override
     protected String[] onGetLanguage() {
-        return new String[]{"eng", "usa", ""};
+        return currentLanguage;
     }
 
     @Override
     protected int onLoadLanguage(String lang, String country, String variant) {
         Log.i(this.getClass().getName(), "load language " + lang);
+        currentLanguage = new String[]{lang, country, variant};
         return onIsLanguageAvailable(lang, country, variant);
     }
 
@@ -169,15 +183,27 @@ public class TTSService extends TextToSpeechService {
 
     @Override
     public String onGetDefaultVoiceNameFor(String lang, String country, String variant) {
-        if (client == null) {
-            client = ((TTSApp) getApplication()).getTtsApiClient();
-            try {
-                client.init();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        ensureClient();
         String defaultVoice = preferences.getString("default_character", "0");
         return String.format("[%s]", defaultVoice);
+    }
+
+    private void ensureClient() {
+//        client = ((TTSApp) getApplication()).getTtsApiClient();
+        System.out.println(-1);
+        Future<ApiClient> clientFuture = new FutureTask<>(() -> {
+            System.out.println(0);
+            ApiClient client = ((TTSApp) getApplication()).getTtsApiClient();
+            System.out.println(client);
+            client.init();
+            return client;
+        });
+        try {
+            client = clientFuture.get();
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -13,14 +13,14 @@ public class TTSApp extends Application {
     public void onCreate() {
         super.onCreate();
         // Initialize the TTS API client
-        initClient();
+        createClient();
     }
 
     public ApiClient getTtsApiClient() {
         return this.ttsApiClient;
     }
 
-    public void initClient() {
+    public void createClient() {
         this.ttsApiClient = new ApiClient(PreferenceManager.getDefaultSharedPreferences(this).getString("server_url", ""));
     }
 
